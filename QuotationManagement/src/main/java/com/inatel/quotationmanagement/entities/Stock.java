@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "STOCK")
+@Table(name = "STOCK_APP")
 @Data
 @NoArgsConstructor
 public class Stock {
@@ -24,8 +26,11 @@ public class Stock {
     @Column(name = "STOCK_ID")
     private String stockId;
 
-    @Column(name = "DESCRIPTION", nullable = true)
-    private String description;
+    @ElementCollection
+    @MapKeyColumn(name = "DATE_KEY")
+    @Column(name = "value")
+    @MapKeyTemporal(TemporalType.DATE)
+    private Map<Date, Double> quotes;
 
     public Stock(String stockId, UUID id) {
         this.stockId = stockId;
