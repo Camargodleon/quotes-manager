@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "STOCK_APP")
+@Table(name = "stock_app")
 @Data
 @NoArgsConstructor
 public class Stock {
@@ -20,20 +20,21 @@ public class Stock {
     @Id
     @GeneratedValue
     @Type(type="org.hibernate.type.UUIDCharType")
-    @Column(length=36, columnDefinition="char(36)")
+    @Column(length=36, columnDefinition="CHAR(36)")
     private UUID id;
 
-    @Column(name = "STOCK_ID")
+    @Column(name = "stock_id", columnDefinition = "VARCHAR(255)")
     private String stockId;
 
     @ElementCollection
-    @MapKeyColumn(name = "DATE_KEY")
-    @Column(name = "VALUE")
+    @CollectionTable(name = "stock_quotes", joinColumns = @JoinColumn(name = "id"))
+    @MapKeyColumn(name = "date_key", columnDefinition = "DATE")
+    @Column(name = "quote_value", columnDefinition = "DOUBLE")
     @MapKeyTemporal(TemporalType.DATE)
     private Map<Date, Double> quotes;
 
-    public Stock(String stockId, UUID id) {
-        this.stockId = stockId;
-        this.id = id;
-    }
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "id", foreignKey = @ForeignKey(name = "id"))
+//    private List<Quotes> quotes;
+
 }

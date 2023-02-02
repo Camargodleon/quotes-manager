@@ -6,6 +6,8 @@ import com.inatel.quotationmanagement.exceptions.InvalidStockException;
 import com.inatel.quotationmanagement.services.StockService;
 import com.inatel.quotationmanagement.services.StockValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +25,9 @@ public class StockController {
     @Autowired
     private StockValidationService stockValidationService;
 
+    @Autowired
+    Environment env;
+
     @PostMapping("/create")
     public ResponseEntity<Stock> postNewStockQuotes(@RequestBody Stock stock) throws InvalidStockException, JsonProcessingException {
         stockValidationService.verifyStock(stock);
@@ -39,7 +44,6 @@ public class StockController {
 
     @GetMapping("/get")
     public ResponseEntity<List<Stock>> gellAll(){
-
         return ResponseEntity.ok(stockService.getAllStocks());
     }
 }

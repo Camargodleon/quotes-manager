@@ -14,6 +14,7 @@ public class RegisterHost implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("Application Started.");
         registerHostService.registerHost(new Host("localhost", 8081));
     }
 }
