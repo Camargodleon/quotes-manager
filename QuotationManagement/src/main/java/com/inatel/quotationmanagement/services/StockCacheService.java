@@ -4,60 +4,43 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inatel.quotationmanagement.dtos.StockCache;
-import com.inatel.quotationmanagement.dtos.StockCacheRepository;
 import com.inatel.quotationmanagement.entities.Stock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class StockCacheService {
 
 
-    @Autowired
-    private StockCacheRepository stockCacheRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StockCacheService.class);
 
-    @Transactional
-    public StockCache save(StockCache stockCache){
-        return stockCacheRepository.save(stockCache);
-    }
-
-    public List<StockCache> findAll(){
-        return stockCacheRepository.findAll();
-    }
-
-    public Optional<StockCache> findByid(String id){
-        return stockCacheRepository.findById(id);
+    @Cacheable("stock")
+    public List<StockCache> findAll() throws JsonProcessingException {
+        LOGGER.info("Fetching data from stock-manager service.");
+        ObjectMapper objectMapper = new ObjectMapper();
+        WebClient client = WebClient.create("http://localhost:8080");
+        String json = client.get().uri("/stock").retrieve().bodyToMono(String.class).block();
+        List<StockCache> stockCacheList = objectMapper.readValue(json, new TypeReference<List<StockCache>>(){});
+        return stockCacheList;
     }
 
     public boolean verifyStockCache(Stock stock) throws JsonProcessingException {
-        List<StockCache> stockCacheList = stockCacheRepository.findAll();
-        if(stockCacheList.isEmpty()){
-            getStockFromService();
-            stockCacheList = stockCacheRepository.findAll();
-        }
+        List<StockCache> stockCacheList = findAll();
         if(stockCacheList.stream().filter(stockCache -> stockCache.getId().equals(stock.getStockId())).collect(Collectors.toList()).isEmpty()){
             return false;
         } else {
             return true;
         }
     }
-
-    public void getStockFromService() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        WebClient client = WebClient.create("http://localhost:8080");
-        String json = client.get().uri("/stock").retrieve().bodyToMono(String.class).block();
-        List<StockCache> stockCacheList = objectMapper.readValue(json, new TypeReference<List<StockCache>>(){});
-        stockCacheRepository.saveAll(stockCacheList);
-    }
-
-    @Transactional
+    @CacheEvict("stock")
     public void clearCache() {
-        stockCacheRepository.deleteAll();
+        LOGGER.info("Evicted cached data.");
     }
 }

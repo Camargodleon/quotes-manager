@@ -8,8 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Data
-@Entity
-@Table(name = "STOCK_CACHE")
 public class StockCache {
 
     @Id
