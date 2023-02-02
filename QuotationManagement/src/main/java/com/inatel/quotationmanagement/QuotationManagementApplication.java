@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QuotationManagementApplication {
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(QuotationManagementApplication.class, args);
 
@@ -19,7 +20,8 @@ public class QuotationManagementApplication {
 	public CommandLineRunner runAtStartup() {
 		return args -> {
 			// Your startup logic goes here
-			System.out.println("Starting application...");
+			System.out.println("Application Started.");
+
 		};
 	}
 

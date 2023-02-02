@@ -42,5 +42,4 @@ public class StockController {
 
         return ResponseEntity.ok(stockService.getAllStocks());
     }
-
 }

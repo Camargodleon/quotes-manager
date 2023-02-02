@@ -28,7 +28,7 @@ public class Stock {
 
     @ElementCollection
     @MapKeyColumn(name = "DATE_KEY")
-    @Column(name = "value")
+    @Column(name = "VALUE")
     @MapKeyTemporal(TemporalType.DATE)
     private Map<Date, Double> quotes;
 
