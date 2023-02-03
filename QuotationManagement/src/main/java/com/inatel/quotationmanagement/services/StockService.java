@@ -19,7 +19,7 @@ public class StockService {
         return stockRepository.save(stock);
     }
 
-    public Stock getStockByStockId(String id){
+    public List<Stock> getStockByStockId(String id){
         return stockRepository.getByStockId(id);
     }
 

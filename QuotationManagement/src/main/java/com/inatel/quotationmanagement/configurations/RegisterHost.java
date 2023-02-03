@@ -2,6 +2,9 @@ package com.inatel.quotationmanagement.configurations;
 
 import com.inatel.quotationmanagement.dtos.Host;
 import com.inatel.quotationmanagement.services.RegisterHostService;
+import com.inatel.quotationmanagement.services.StockCacheService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -9,12 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegisterHost implements CommandLineRunner {
 
+
+
     @Autowired
     private RegisterHostService registerHostService;
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Application Started.");
         registerHostService.registerHost(new Host("localhost", 8081));
     }
 }

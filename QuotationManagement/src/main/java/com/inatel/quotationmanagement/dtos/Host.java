@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class Host {
 
-    String host;
-    Integer port;
+    private String host;
+    private int port;
 }
