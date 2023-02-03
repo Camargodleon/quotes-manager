@@ -10,8 +10,8 @@ import javax.persistence.Table;
 @Data
 public class StockCache {
 
-    @Id
-    String id;
-    @Column
-    String description;
+
+    private String id;
+
+    private String description;
 }

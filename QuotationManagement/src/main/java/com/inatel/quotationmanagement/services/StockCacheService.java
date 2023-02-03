@@ -7,6 +7,7 @@ import com.inatel.quotationmanagement.dtos.StockCache;
 import com.inatel.quotationmanagement.entities.Stock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,14 @@ public class StockCacheService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StockCacheService.class);
 
+    @Value("${stockmanager.address}")
+    private String address;
+
 
     public List<StockCache> findAll() throws JsonProcessingException {
         LOGGER.info("Fetching data from stock-manager service.");
         ObjectMapper objectMapper = new ObjectMapper();
-        WebClient client = WebClient.create("http://localhost:8080");
+        WebClient client = WebClient.create("http://"+address+":8080");
         String json = client.get().uri("/stock").retrieve().bodyToMono(String.class).block();
         List<StockCache> stockCacheList = objectMapper.readValue(json, new TypeReference<List<StockCache>>(){});
         return stockCacheList;

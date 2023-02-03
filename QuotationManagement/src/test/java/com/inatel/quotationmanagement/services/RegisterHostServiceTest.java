@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -35,11 +36,14 @@ public class RegisterHostServiceTest {
     @Autowired
     private RegisterHostService registerHostService;
 
+    @Value("${stockmanager.address}")
+    private String address;
+
 
     @Test
     @DisplayName("Register host on call")
     public void registerHostOnCall() throws JsonProcessingException {
-        WebClient client = WebClient.create("http://localhost:8080");
+        WebClient client = WebClient.create("http://"+address+":8080");
         String json = client.get().uri("/notification").retrieve().bodyToMono(String.class).block();
         registerHostService.registerHost(new Host("localhost", 8082));
         String newJson = client.get().uri("/notification").retrieve().bodyToMono(String.class).block();
