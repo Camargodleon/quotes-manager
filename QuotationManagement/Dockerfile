@@ -5,7 +5,7 @@ WORKDIR /app
 COPY pom.xml pom.xml
 COPY src /app/src/
 EXPOSE 8081
-RUN mvn clean package
+RUN mvn clean package -DSPRING_PROFILES_ACTIVE=prod
 
 FROM eclipse-temurin:11
 

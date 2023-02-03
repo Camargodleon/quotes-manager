@@ -28,9 +28,6 @@ public class StockController {
     @Autowired
     private StockValidationService stockValidationService;
 
-    @Autowired
-    Environment env;
-
     @ApiOperation("Registers mew quotes for an existing Stock.")
     @PostMapping("/create")
     public ResponseEntity<Stock> postNewStockQuotes(@ApiParam(value = "An object representing a new Stock to be registered")
