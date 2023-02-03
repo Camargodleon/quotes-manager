@@ -56,7 +56,7 @@ public class StockServiceTest {
     }
 
     @Test
-    @DisplayName("Return Stock when using valid stockId")
+    @DisplayName("Return Stock list when using valid stockId")
     public void returnStockWhenAskingValidStockID(){
         List<Stock> stockList = stockService.getStockByStockId("petr4");
         assertThat(stockList).allSatisfy(stock -> stock.getStockId().equals("petr4"));

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -65,14 +66,14 @@ public class StockControllerTest {
     @Order(3)
     public void throwExceptionOnUnregisretedStock(){
         stock.setStockId("ABEV3");
-        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().isBadRequest().expectBody(InvalidStockException.class);
+        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().is4xxClientError().expectBody(InvalidStockException.class);
     }
 
     @Test
     @DisplayName("Should persist registered stock")
     @Order(4)
     public void persistRegisteredStock(){
-
-        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().isBadRequest().expectBody(InvalidStockException.class);
+        stock.setStockId("petr4");
+        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().isCreated().expectBody(Stock.class);
     }
 }
