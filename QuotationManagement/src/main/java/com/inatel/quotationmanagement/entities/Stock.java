@@ -38,14 +38,6 @@ public class Stock {
     @ApiModelProperty(name = "Stock ID", dataType = "String", access = "private", example = "petr4", notes = "String representing a stock.")
     private String stockId;
 
-//    @ElementCollection
-//    @CollectionTable(name = "stock_quotes", joinColumns = @JoinColumn(name = "id"))
-//    @MapKeyColumn(name = "date_key", columnDefinition = "DATE")
-//    @Column(name = "quote_value", columnDefinition = "DOUBLE")
-//    @MapKeyTemporal(TemporalType.DATE)
-//    @ApiModelProperty(notes = "Key-value map representing the Quotes registered for this Stock.", value = "quotes",name = "Quotes", dataType = "Map<Date, Double>", access = "private", example = "{ \"2019-01-01\": \"10\", \"2019-01-02\": \"12\", \"2019-01-03\": \"14\"}")
-//    @NotNull
-//    private Map<Date, Double> quotes;
 
     @ApiModelProperty(notes = "Quotes Registered to this Stock", value = "quotes",name = "Quotes", dataType = "Quote", access = "private")
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
