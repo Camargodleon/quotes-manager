@@ -1,6 +1,8 @@
 package com.inatel.quotationmanagement.services;
 
+import com.inatel.quotationmanagement.dtos.StockDTO;
 import com.inatel.quotationmanagement.entities.Stock;
+import com.inatel.quotationmanagement.exceptions.AlreadyRegisteredQuoteException;
 import com.inatel.quotationmanagement.repositories.StockRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @DisplayName("StockRepository funcionality tests.")
@@ -23,50 +24,62 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles("test")
-@Order(8)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StockServiceTest {
 
 
     @Autowired
     private StockService stockService;
     private Stock stock;
-    private Map<Date, Double> quotes;
+
+    private StockDTO stockDTO;
+    private Map<String, Double> quotes;
 
     @BeforeAll
     public void init() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         quotes = new HashMap<>();
-        quotes.put(formatter.parse("2023-01-31"), 10.0);
-        quotes.put(formatter.parse("2023-01-30"), 11.0);
-        quotes.put(formatter.parse("2023-02-01"), 14.0);
-        stock = new Stock(UUID.randomUUID(), "petr4", quotes);
+        quotes.put("2023-01-31", 10.0);
+        quotes.put("2023-01-30", 11.0);
+        quotes.put("2023-02-01", 14.0);
+        stockDTO = new StockDTO(UUID.randomUUID(), "petr4", quotes);
+        stock = new Stock(stockDTO);
     }
 
     @Test
     @DisplayName("Return Stock Entity")
-    public void returnEntityOnSave(){
-        assertNotNull(stockService.save(stock));
+    @Order(1)
+    public void returnEntityOnSave() throws AlreadyRegisteredQuoteException {
+        assertNotNull(stockService.save(stockDTO));
     }
 
     @Test
-    @DisplayName("Return empty list when ask for non existent stock")
+    @DisplayName("Return AlreadyRegisteredQuoteException when saving Quotes for same stock and date")
+    @Order(2)
+    public void shouldReturnAlreadyRegisteredQuoteException() throws AlreadyRegisteredQuoteException {
+
+        assertThrows(AlreadyRegisteredQuoteException.class, () -> stockService.save(stockDTO));
+    }
+
+    @Test
+    @DisplayName("Return null when ask for non existent stock")
     public void returnNullWhenAskingForNonExistentStock(){
-        List<Stock> stockList = stockService.getStockByStockId("invalidID");
-        assertThat(stockList).isEmpty();
+        StockDTO dto = stockService.getStockByStockId("invalidID");
+        assertNull(dto);
     }
 
     @Test
-    @DisplayName("Return Stock list when using valid stockId")
+    @DisplayName("Return Stock register when using valid stockId")
     public void returnStockWhenAskingValidStockID(){
-        List<Stock> stockList = stockService.getStockByStockId("petr4");
-        assertThat(stockList).allSatisfy(stock -> stock.getStockId().equals("petr4"));
+        StockDTO dto = stockService.getStockByStockId("petr4");
+        assertNotNull(dto);
     }
 
 
     @Test
-    @DisplayName("Return List<Stock> on getAllStocks() call")
+    @DisplayName("Return List<StockDTO> on getAllStocks() call")
     public void returnStockList(){
-        List<Stock> stock = stockService.getAllStocks();
+        List<StockDTO> stock = stockService.getAllStocks();
         assertTrue(!stock.isEmpty());
     }
 }

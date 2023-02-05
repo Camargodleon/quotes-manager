@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inatel.quotationmanagement.dtos.StockCache;
+import com.inatel.quotationmanagement.dtos.StockDTO;
 import com.inatel.quotationmanagement.entities.Stock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +36,9 @@ public class StockCacheService {
         return stockCacheList;
     }
     @Cacheable(value = "stock")
-    public boolean verifyStockCache(Stock stock) throws JsonProcessingException {
+    public boolean verifyStockCache(StockDTO stockDTO) throws JsonProcessingException {
         List<StockCache> stockCacheList = findAll();
-        if(stockCacheList.stream().filter(stockCache -> stockCache.getId().equals(stock.getStockId())).collect(Collectors.toList()).isEmpty()){
+        if(stockCacheList.stream().filter(stockCache -> stockCache.getId().equals(stockDTO.getStockId())).collect(Collectors.toList()).isEmpty()){
             return false;
         } else {
             return true;

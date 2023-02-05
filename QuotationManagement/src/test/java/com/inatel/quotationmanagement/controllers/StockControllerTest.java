@@ -1,6 +1,6 @@
 package com.inatel.quotationmanagement.controllers;
 
-import com.inatel.quotationmanagement.entities.Stock;
+import com.inatel.quotationmanagement.dtos.StockDTO;
 import com.inatel.quotationmanagement.exceptions.InvalidStockException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ import java.util.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-@Order(1)
+@TestMethodOrder(MethodOrderer.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StockControllerTest {
 
@@ -32,18 +32,19 @@ public class StockControllerTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    private Map<Date, Double> quotes;
+    private Map<String, Double> quotes;
 
-    private Stock stock;
+    private StockDTO stockDTO;
+
 
     @BeforeAll
     public void init() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         quotes = new HashMap<>();
-        quotes.put(formatter.parse("2023-01-31"), 10.0);
-        quotes.put(formatter.parse("2023-01-30"), 11.0);
-        quotes.put(formatter.parse("2023-02-01"), 14.0);
-        stock = new Stock(UUID.randomUUID(), "petr4", quotes);
+        quotes.put("2023-01-31", 10.0);
+        quotes.put("2023-01-30", 11.0);
+        quotes.put("2023-02-01", 14.0);
+        stockDTO = new StockDTO(UUID.randomUUID(), "petr4", quotes);
     }
 
 
@@ -51,29 +52,29 @@ public class StockControllerTest {
     @DisplayName("Return list on stock/get endpoint")
     @Order(1)
     public void returnListOnGetEndpoint(){
-        webTestClient.get().uri("stock/get").exchange().expectStatus().isOk().expectBodyList(Stock.class);
+        webTestClient.get().uri("stock/get").exchange().expectStatus().isOk().expectBodyList(StockDTO.class);
     }
 
     @Test
-    @DisplayName("Return list on stock/get/{id} endpoint")
+    @DisplayName("Return one entry on stock/get/{id} endpoint")
     @Order(2)
     public void returnListOnGetAllEndpoint(){
-        webTestClient.get().uri("/stock/get/petr4").exchange().expectStatus().isOk().expectBodyList(Stock.class).hasSize(1);
+        webTestClient.get().uri("/stock/get/petr4").exchange().expectStatus().isOk().expectBody(StockDTO.class);
     }
 
     @Test
     @DisplayName("Throw exception when posting unregistered stock")
     @Order(3)
     public void throwExceptionOnUnregisretedStock(){
-        stock.setStockId("ABEV3");
-        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().is4xxClientError().expectBody(InvalidStockException.class);
+        stockDTO.setStockId("ABEV3");
+        webTestClient.post().uri("stock/create").body(Mono.just(stockDTO), StockDTO.class).exchange().expectStatus().is4xxClientError().expectBody(InvalidStockException.class);
     }
 
     @Test
     @DisplayName("Should persist registered stock")
     @Order(4)
     public void persistRegisteredStock(){
-        stock.setStockId("petr4");
-        webTestClient.post().uri("stock/create").body(Mono.just(stock), Stock.class).exchange().expectStatus().isCreated().expectBody(Stock.class);
+        stockDTO.setStockId("petr4");
+        webTestClient.post().uri("stock/create").body(Mono.just(stockDTO), StockDTO.class).exchange().expectStatus().isCreated().expectBody(StockDTO.class);
     }
 }

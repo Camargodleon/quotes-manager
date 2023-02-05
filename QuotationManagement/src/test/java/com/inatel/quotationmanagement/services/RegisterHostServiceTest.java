@@ -26,7 +26,6 @@ import java.util.List;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles("test")
-@Order(4)
 public class RegisterHostServiceTest {
 
 

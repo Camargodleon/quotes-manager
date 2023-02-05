@@ -23,4 +23,10 @@ public class ControllerException extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorEntity(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
+    @ExceptionHandler(value = AlreadyRegisteredQuoteException.class)
+    public ResponseEntity<ErrorEntity> handleRepeatedQuote(AlreadyRegisteredQuoteException ex){
+        LOGGER.error("Caught AlreadyRegisteredQuoteException.");
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ErrorEntity(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
 }

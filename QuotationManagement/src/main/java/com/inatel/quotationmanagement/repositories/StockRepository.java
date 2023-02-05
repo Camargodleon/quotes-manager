@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, UUID> {
     @Query(value = "SELECT * FROM stock_app s WHERE s.stock_id = :id", nativeQuery = true)
-    List<Stock> getByStockId(@Param("id") String id);
+    Stock getByStockId(@Param("id") String id);
 }

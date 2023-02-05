@@ -1,7 +1,9 @@
 package com.inatel.quotationmanagement.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.inatel.quotationmanagement.dtos.StockDTO;
 import com.inatel.quotationmanagement.entities.Stock;
+import com.inatel.quotationmanagement.exceptions.AlreadyRegisteredQuoteException;
 import com.inatel.quotationmanagement.exceptions.InvalidStockException;
 import com.inatel.quotationmanagement.services.StockService;
 import com.inatel.quotationmanagement.services.StockValidationService;
@@ -28,26 +30,26 @@ public class StockController {
     @Autowired
     private StockValidationService stockValidationService;
 
-    @ApiOperation("Registers mew quotes for an existing Stock.")
+    @ApiOperation("Registers new quotes for an existing Stock.")
     @PostMapping("/create")
-    public ResponseEntity<Stock> postNewStockQuotes(@ApiParam(value = "An object representing a new Stock to be registered")
-                                                        @RequestBody Stock stock) throws InvalidStockException, JsonProcessingException {
-        stockValidationService.verifyStock(stock);
-        Stock response = stockService.save(stock);
+    public ResponseEntity<StockDTO> postNewStockQuotes(@ApiParam(value = "An object representing a new Stock to be registered")
+                                                        @RequestBody StockDTO stockDTO) throws InvalidStockException, JsonProcessingException, AlreadyRegisteredQuoteException {
+        stockValidationService.verifyStock(stockDTO);
+        StockDTO response = stockService.save(stockDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/get/{id}")
-                .buildAndExpand(stock.getStockId()).toUri();
+                .buildAndExpand(stockDTO.getStockId()).toUri();
         return ResponseEntity.created(uri).body(response);
     }
 
     @ApiOperation("Checks for existing Stocks matching the given stock id and returns a List of Stocks and it's registered quotes.")
     @GetMapping("/get/{id}")
-    public ResponseEntity<List<Stock>> getStockByStockId(@ApiParam(value = "A String representing the id of a Stock", example = "petr4") @PathVariable String id){
+    public ResponseEntity<StockDTO> getStockByStockId(@ApiParam(value = "A String representing the id of a Stock", example = "petr4") @PathVariable String id){
         return ResponseEntity.ok(stockService.getStockByStockId(id));
     }
 
     @ApiOperation("Returns a List of Stocks and it's registered quotes.")
     @GetMapping("/get")
-    public ResponseEntity<List<Stock>> gellAll(){
+    public ResponseEntity<List<StockDTO>> gellAll(){
         return ResponseEntity.ok(stockService.getAllStocks());
     }
 }

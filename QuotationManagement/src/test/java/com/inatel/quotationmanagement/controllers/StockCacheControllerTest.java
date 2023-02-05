@@ -18,7 +18,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-@Order(3)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StockCacheControllerTest {
 

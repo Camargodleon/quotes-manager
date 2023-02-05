@@ -2,6 +2,7 @@ package com.inatel.quotationmanagement.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.inatel.quotationmanagement.dtos.StockCache;
+import com.inatel.quotationmanagement.dtos.StockDTO;
 import com.inatel.quotationmanagement.entities.Stock;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @ActiveProfiles("test")
-@Order(5)
 public class StockCacheServiceTest {
 
     @Autowired
@@ -35,17 +35,17 @@ public class StockCacheServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
-    private Stock stock;
-    private Map<Date, Double> quotes;
+    private StockDTO stockDTO;
+    private Map<String, Double> quotes;
 
     @BeforeAll
     public void init() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         quotes = new HashMap<>();
-        quotes.put(formatter.parse("2023-01-31"), 10.0);
-        quotes.put(formatter.parse("2023-01-30"), 11.0);
-        quotes.put(formatter.parse("2023-02-01"), 14.0);
-        stock = new Stock(UUID.randomUUID(), "petr4", quotes);
+        quotes.put("2023-01-31", 10.0);
+        quotes.put("2023-01-30", 11.0);
+        quotes.put("2023-02-01", 14.0);
+        stockDTO = new StockDTO(UUID.randomUUID(), "petr4", quotes);
     }
 
 
@@ -58,15 +58,15 @@ public class StockCacheServiceTest {
     @Test
     @DisplayName("Validates valid stock")
     public void validatesValidStock() throws JsonProcessingException {
-        assertTrue(stockCacheService.verifyStockCache(stock));
+        assertTrue(stockCacheService.verifyStockCache(stockDTO));
     }
 
 
     @Test
     @DisplayName("Invalidates invalid stock")
     public void invalidatesInvalidStock() throws JsonProcessingException {
-        stock.setStockId("invalidID");
-        assertFalse(stockCacheService.verifyStockCache(stock));
+        stockDTO.setStockId("invalidID");
+        assertFalse(stockCacheService.verifyStockCache(stockDTO));
     }
 
 }
